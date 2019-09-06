@@ -1,110 +1,66 @@
-## Week 2 Quiz - Neural Network Basics
+## Week 2 Quiz - Deep convolutional models
 
-1. What does a neuron compute?
+1. Which of the following do you typically see as you move to deeper layers in a ConvNet?
 
-    - [ ] A neuron computes an activation function followed by a linear function (z = Wx + b)
+    - [ ] $n_H$ and $n_W$ increases, while $n_c$ also increases
+    - [ ] $n_H$ and $n_W$ increases, while $n_c$ decreases
+    - [ ] $n_H$ and $n_W$ decreases, while $n_c$ also decreases
+    - [x] $n_H$ and $n_W$ decreases, while $n_c$ increases
 
-    - [x] A neuron computes a linear function (z = Wx + b) followed by an activation function
+2. Which of the following do you typically see in a ConvNet? (Check all that apply.)
 
-    - [ ] A neuron computes a function g that scales the input x linearly (Wx + b)
+    - [x] Multiple CONV layers followed by a POOL layer
+    - [ ] Multiple POOL layers followed by a CONV layer
+    - [x] FC layers in the last few layers
+    - [ ] FC layers in the first few layers
 
-    - [ ] A neuron computes the mean of all features before applying the output to an activation function
+3. In order to be able to build very deep networks, we usually only use pooling layers to downsize the height/width of the activation volumes while convolutions are used with “valid” padding. Otherwise, we would downsize the input of the model too quickly.
 
-    Note: The output of a neuron is a = g(Wx + b) where g is the activation function (sigmoid, tanh, ReLU, ...).
-    
-2. Which of these is the "Logistic Loss"?
+    > should be "SAME" padding
 
-    - Check [here](https://en.wikipedia.org/wiki/Cross_entropy#Cross-entropy_error_function_and_logistic_regression).
-    
-    Note: We are using a cross-entropy loss function.
-    
-3. Suppose img is a (32,32,3) array, representing a 32x32 image with 3 color channels red, green and blue. How do you reshape this into a column vector?
+    - [ ] True
+    - [x] False
 
-    - `x = img.reshape((32 * 32 * 3, 1))`
-    
-4. Consider the two following random arrays "a" and "b":
+4. Training a deeper network (for example, adding additional layers to the network) allows the network to fit more complex functions and thus almost always results in lower training error. For this question, assume we’re referring to “plain” networks.
 
-    ```
-    a = np.random.randn(2, 3) # a.shape = (2, 3)
-    b = np.random.randn(2, 1) # b.shape = (2, 1)
-    c = a + b
-    ```
-    
-    What will be the shape of "c"?
-    
-    b (column vector) is copied 3 times so that it can be summed to each column of a. Therefore, `c.shape = (2, 3)`.
-    
-    
-5. Consider the two following random arrays "a" and "b":
+    > should be skip connection
 
-    ```
-    a = np.random.randn(4, 3) # a.shape = (4, 3)
-    b = np.random.randn(3, 2) # b.shape = (3, 2)
-    c = a * b
-    ```
-    
-    What will be the shape of "c"?
-    
-     "*" operator indicates element-wise multiplication. Element-wise multiplication requires same dimension between two matrices. It's going to be an error.
+    - [ ] True
+    - [x] False
 
-6. Suppose you have n_x input features per example. Recall that X=[x^(1), x^(2)...x^(m)]. What is the dimension of X?
+5. The following equation captures the computation in a ResNet block. What goes into the two blanks above?
 
-    `(n_x, m)`
+    $$a^{[l+2]} = g(W^{[l+2]} g(W^{[l+1]} a^{[l]} + b^{[l+1]}) + b^{[l+2]} + \_) + \_$$
 
-    Note: A stupid way to validate this is use the formula Z^(l) = W^(l)A^(l) when l = 1, then we have
-    
-    - A^(1) = X
-    - X.shape = (n_x, m) 
-    - Z^(1).shape = (n^(1), m)
-    - W^(1).shape = (n^(1), n_x)
-    
-7. Recall that `np.dot(a,b)` performs a matrix multiplication on a and b, whereas `a*b` performs an element-wise multiplication.
+    $a^{[l]}$ and 0, respectively
 
-    Consider the two following random arrays "a" and "b":
+6. Which ones of the following statements on Residual Networks are true? (Check all that apply.)
 
-    ```
-    a = np.random.randn(12288, 150) # a.shape = (12288, 150)
-    b = np.random.randn(150, 45) # b.shape = (150, 45)
-    c = np.dot(a, b)
-    ```
-    
-    What is the shape of c?
-    
-    `c.shape = (12288, 45)`, this is a simple matrix multiplication example.
-    
-8. Consider the following code snippet:
+    - [ ] A ResNet with L layers would have on the order of $L^2$ skip conncections in total.
+    - [x] Using a skip-connection helps the gradient to backpropagate and thus helps you to train deeper networks.
+    - [ ] The skip-conncetions compute a complex non-linear function of the input to pass to a deeper layer in the network.
+    - [x] The skip-connection makes it easy for the newwork to learn an identity mapping between the input and the output within the ResNet block.
 
-    ```
-    # a.shape = (3,4)
-    # b.shape = (4,1)
-    for i in range(3):
-      for j in range(4):
-        c[i][j] = a[i][j] + b[j]
-    ```
-    
-    How do you vectorize this?
+7. Suppose you have an input volume of dimension 64x64x16. How many parameters would a single 1x1 convolutional filter have (including the bias)?
 
-    `c = a + b.T`
+    16 + 1 = 17
 
-9. Consider the following code:
+8. Suppose you have an input volume of dimension $n_H \times n_W \times n_C$. Which of the following statements you agree with? (Assume that “1x1 convolutional layer” below always uses a stride of 1 and no padding.)
 
-    ```
-    a = np.random.randn(3, 3)
-    b = np.random.randn(3, 1)
-    c = a * b
-    ```
-    
-    What will be c?
-    
-    This will invoke broadcasting, so b is copied three times to become (3,3), and ∗ is an element-wise product so `c.shape = (3, 3)`.
-    
-10. Consider the following computation graph.
+    - [ ] You can use a pooling layer to reduce $n_H$, $n_W$, and $n_C$.
+    - [x] You can use a pooling layer to reduce $n_H$, $n_W$, but not $n_C$.
+    - [x] You can use a 1x1 convolutional layer to reduce $n_C$ but not $n_H$, $n_W$.
+    - [ ] You can use a 1x1 convolutional layer to reduce $n_H$, $n_W$ and $n_C$.
 
-    ```
-    J = u + v - w
-      = a * b + a * c - (b + c)
-      = a * (b + c) - (b + c)
-      = (a - 1) * (b + c)
-    ```
-      
-    Answer: `(a - 1) * (b + c)`
+9.  Which ones of the following statements on Inception Networks are true? (Check all that apply.)
+
+    - [ ] Making an inception network deeper (by stacking more inception blocks together) should not hurt training set performance.
+    - [x] A single inception block allows the network to use a combination of 1x1, 3x3, 5 x 5 convolutions and pooling.
+    - [ ] Inception networks incorpoarates a variety of network architectures (similar to fropout, which randomly cheeses a network architecture on each step) and thus has a similar regularizing effect as dropout.
+    - [x] Inception block usually use 1x1 convolutions to reduce the input data volume's size before appliying 3x3 and 5x5 convolutions.
+
+10. Which of the following are common reasons for using open-source implementations of ConvNets (both the model and/or weights)? Check all that apply.
+    - [ ] The same techniques for winning computer vision competitions, such as using multiple crops at test time, are widely used in practical deployments (or production system deployments) of ConvNets.
+    - [x] Parameters trained for one computer vision task are often usedful as pretraining for other computer vision tasks.
+    - [ ] A model trained for one computer vision task can usually be used to perform data augmentation even for a different computer vision task.
+    - [x] It is a convenient way to get working an implememntation of a complex ConvNet architecture.
